@@ -573,3 +573,29 @@ def delete_question(question_id):
     db.session.commit()
     flash("Question deleted successfully!", 'success')
     return redirect(url_for('show_questions', quiz_id=quiz_id))
+
+
+@app.route('/settings', methods=['GET', 'POST'])
+def settings():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))  # Redirect if not logged in
+
+    user_id = session['user_id']
+    user = User.query.get(user_id)
+
+    if request.method == 'POST':
+        # Update user details
+        user.name = request.form.get('name')
+        user.email = request.form.get('email')
+        user.username = request.form.get('username')
+
+        # If password is provided, update it
+        new_password = request.form.get('password')
+        if new_password:
+            user.password = generate_password_hash(new_password)
+
+        db.session.commit()
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('settings'))
+
+    return render_template('settings.html', user=user)
