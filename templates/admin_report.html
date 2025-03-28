@@ -1,0 +1,24 @@
+{% extends 'layout2.html' %}
+
+{% block title %} Admin Report {% endblock %}
+
+{% block content %}
+<h2>Admin Report</h2>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <p class="{{ category }}">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<h3>📌 Chapters per Subject</h3>
+<img src="data:image/png;base64,{{ chart1_url }}" alt="Chapters per Subject" class="img-fluid">
+
+<h3>📌 Quizzes per Chapter</h3>
+<img src="data:image/png;base64,{{ chart2_url }}" alt="Quizzes per Chapter" class="img-fluid">
+
+<h3>📌 Questions per Quiz</h3>
+<img src="data:image/png;base64,{{ chart3_url }}" alt="Questions per Quiz" class="img-fluid">
+{% endblock %}

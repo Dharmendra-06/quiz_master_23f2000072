@@ -6,9 +6,9 @@ from functools import wraps
 import sqlite3
 import csv
 import os
-# import matplotlib
-# matplotlib.use('Agg')  # Add this line before importing pyplot
-# import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')  # Add this line before importing pyplot
+import matplotlib.pyplot as plt
 import io
 import base64
 from sqlalchemy.orm import aliased
@@ -599,3 +599,74 @@ def settings():
         return redirect(url_for('settings'))
 
     return render_template('settings.html', user=user) 
+
+
+@app.route('/admin/report')
+@admin_required
+def admin_report():
+    # Check if the user is logged in and is an admin
+    user_id = session.get('user_id')
+    if not user_id:
+        flash("You must be logged in as an admin to access this page.", "danger")
+        return redirect(url_for('login'))
+    
+    user = User.query.get(user_id)
+    if not user or not user.is_admin:
+        flash("Access Denied! Only admins can view reports.", "danger")
+        return redirect(url_for('dashboard'))
+
+    # 📌 1. Number of Chapters per Subject
+    subjects = Subject.query.all()
+    subject_data = {sub.name: len(sub.chapters) for sub in subjects}
+
+    plt.figure(figsize=(8, 5))
+    plt.bar(subject_data.keys(), subject_data.values(), color='blue')
+    plt.xlabel("Subjects")
+    plt.ylabel("Number of Chapters")
+    plt.title("Chapters per Subject")
+    plt.xticks(rotation=45)
+
+    img1 = io.BytesIO()
+    plt.savefig(img1, format='png')
+    img1.seek(0)
+    chart1_url = base64.b64encode(img1.getvalue()).decode()
+
+    # 📌 2. Number of Quizzes per Chapter
+    chapters = Chapter.query.all()
+    chapter_data = {ch.name: len(ch.quizzes) for ch in chapters}
+
+    plt.figure(figsize=(8, 5))
+    plt.bar(chapter_data.keys(), chapter_data.values(), color='green')
+    plt.xlabel("Chapters")
+    plt.ylabel("Number of Quizzes")
+    plt.title("Quizzes per Chapter")
+    plt.xticks(rotation=45)
+
+    img2 = io.BytesIO()
+    plt.savefig(img2, format='png')
+    img2.seek(0)
+    chart2_url = base64.b64encode(img2.getvalue()).decode()
+
+    # 📌 3. Number of Questions per Quiz
+    quizzes = Quiz.query.all()
+    quiz_data = {q.title: len(q.questions) for q in quizzes}
+
+    plt.figure(figsize=(8, 5))
+    plt.bar(quiz_data.keys(), quiz_data.values(), color='red')
+    plt.xlabel("Quizzes")
+    plt.ylabel("Number of Questions")
+    plt.title("Questions per Quiz")
+    plt.xticks(rotation=45)
+
+    img3 = io.BytesIO()
+    plt.savefig(img3, format='png')
+    img3.seek(0)
+    chart3_url = base64.b64encode(img3.getvalue()).decode()
+
+    return render_template('admin_report.html', chart1_url=chart1_url, chart2_url=chart2_url, chart3_url=chart3_url)
+
+@app.route("/chapter/<int:chapter_id>/quizzes")
+def chapter_quizzes(chapter_id):
+    chapter = Chapter.query.get_or_404(chapter_id)
+    quizzes = Quiz.query.filter_by(chapter_id=chapter_id).all()
+    return render_template("chapter_quizzes.html", chapter=chapter, quizzes=quizzes)
