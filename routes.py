@@ -803,4 +803,3 @@ def questions(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
     return render_template('questions.html', quiz=quiz, questions=quiz.questions)
 
-
