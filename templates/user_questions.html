@@ -1,0 +1,28 @@
+{% extends 'user_layout.html' %}
+
+{% block title %} Quiz Questions {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>📝 {{ quiz.title }}</h2>
+    <p class="lead">{{ quiz.description }}</p>
+
+    <h4>📖 Questions:</h4>
+    <div class="list-group">
+        {% for question in questions %}
+        <div class="list-group-item">
+            <h5>Q{{ loop.index }}: {{ question.text }}</h5>
+            <ul class="list-unstyled">
+                <li>A) {{ question.option_a }}</li>
+                <li>B) {{ question.option_b }}</li>
+                <li>C) {{ question.option_c }}</li>
+                <li>D) {{ question.option_d }}</li>
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="{{ url_for('user_chapters') }}" class="btn btn-primary mt-3">Back to Chapters</a>
+</div>
+{% endblock %}
+ 

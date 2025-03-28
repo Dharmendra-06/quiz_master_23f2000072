@@ -1,0 +1,16 @@
+{% extends 'user_layout.html' %}
+
+{% block title %}Subjects{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-3">Select a Subject</h2>
+    <div class="list-group">
+        {% for subject in subjects %}
+            <a href="{{ url_for('chapters', subject_id=subject.id) }}" class="list-group-item list-group-item-action">
+                {{ subject.name }}
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

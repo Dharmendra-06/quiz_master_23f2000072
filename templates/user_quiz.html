@@ -1,0 +1,12 @@
+{% extends 'user_layout.html' %}
+
+{% block title %} Quiz Details {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>📝 {{ quiz.title }}</h2>
+    <p class="lead">{{ quiz.description }}</p>
+
+    <a href="{{ url_for('user_chapters') }}" class="btn btn-primary">Back to Chapters</a>
+</div>
+{% endblock %}

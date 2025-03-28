@@ -1,0 +1,35 @@
+{% extends 'user_layout.html' %}
+
+{% block title %} My Subjects {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-3">📚 My Subjects</h2>
+    
+    <div class="accordion" id="subjectsAccordion">
+        {% for subject in subjects %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ subject.id }}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ subject.id }}" aria-expanded="false">
+                    {{ subject.name }}
+                </button>
+            </h2>
+            <div id="collapse{{ subject.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ subject.id }}" data-bs-parent="#subjectsAccordion">
+                <div class="accordion-body">
+                    <h5>Chapters:</h5>
+                    <ul class="list-group">
+                        {% for chapter in subject.chapters %}
+                        <li class="list-group-item">
+                            <a href="{{ url_for('user_chapter_detail', chapter_id=chapter.id) }}" class="text-decoration-none">
+                                📖 {{ chapter.name }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
