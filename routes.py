@@ -504,3 +504,72 @@ def search():
         quizzes, subjects, chapters = [], [], []
 
     return render_template('search_results.html', query=query, quizzes=quizzes, subjects=subjects, chapters=chapters)
+
+
+@app.route('/admin/quiz/<int:quiz_id>/add_question', methods=['GET', 'POST'])
+@admin_required
+def add_question(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+
+    if request.method == 'POST':
+        try:
+            text = request.form['text']
+            option_a = request.form['option_a']
+            option_b = request.form['option_b']
+            option_c = request.form['option_c']
+            option_d = request.form['option_d']
+            correct_option = request.form['correct_option']  # FIXED
+            marks = request.form['marks']
+
+            new_question = Question(
+                quiz_id=quiz_id,
+                text=text,
+                option_a=option_a,
+                option_b=option_b,
+                option_c=option_c,
+                option_d=option_d,
+                correct_option=correct_option,
+                marks=int(marks)
+            )
+
+            db.session.add(new_question)
+            db.session.commit()
+            flash('Question added successfully!', 'success')
+            return redirect(url_for('show_questions', quiz_id=quiz_id))
+        
+        except KeyError as e:
+            flash(f"Missing form field: {str(e)}", "danger")
+            return redirect(url_for('add_question', quiz_id=quiz_id))
+
+    return render_template('add_question.html', quiz=quiz)
+
+# Edit a question
+@app.route('/admin/question/<int:question_id>/edit', methods=['GET', 'POST'])
+@admin_required
+def edit_question(question_id):
+    question = Question.query.get_or_404(question_id)
+    
+    if request.method == 'POST':
+        question.text = request.form['text']
+        question.option_a = request.form['option_a']
+        question.option_b = request.form['option_b']
+        question.option_c = request.form['option_c']
+        question.option_d = request.form['option_d']
+        question.correct_answer = request.form['correct_answer']
+        
+        db.session.commit()
+        flash("Question updated successfully!", 'success')
+        return redirect(url_for('show_questions', quiz_id=question.quiz_id))
+    
+    return render_template('admin/edit_question.html', question=question)
+
+# Delete a question
+@app.route('/admin/question/<int:question_id>/delete', methods=['POST'])
+@admin_required
+def delete_question(question_id):
+    question = Question.query.get_or_404(question_id)
+    quiz_id = question.quiz_id
+    db.session.delete(question)
+    db.session.commit()
+    flash("Question deleted successfully!", 'success')
+    return redirect(url_for('show_questions', quiz_id=quiz_id))
