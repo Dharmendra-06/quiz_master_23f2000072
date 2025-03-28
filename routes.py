@@ -488,3 +488,19 @@ def record_score(user_id, quiz_id, total_scored):
     score = Score(user_id=user_id, quiz_id=quiz_id, total_scored=total_scored)
     db.session.add(score)
     db.session.commit()
+
+
+@app.route('/search', methods=['GET'])
+@admin_required
+def search():
+    query = request.args.get('query', '').strip()  # Get search query from URL
+
+    if query:
+        # Perform case-insensitive search on quizzes, subjects, and chapters
+        quizzes = Quiz.query.filter(Quiz.title.ilike(f"%{query}%")).all()
+        subjects = Subject.query.filter(Subject.name.ilike(f"%{query}%")).all()
+        chapters = Chapter.query.filter(Chapter.name.ilike(f"%{query}%")).all()
+    else:
+        quizzes, subjects, chapters = [], [], []
+
+    return render_template('search_results.html', query=query, quizzes=quizzes, subjects=subjects, chapters=chapters)
