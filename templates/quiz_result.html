@@ -1,0 +1,15 @@
+{% extends 'user_layout.html' %}
+
+{% block title %}Quiz Result{% endblock %}
+
+{% block content %}
+<div class="container mt-4 text-center">
+    <h2>{{ quiz.title }} - Result</h2>
+    <div class="card p-4 mt-3">
+        <h4>You Scored:</h4>
+        <h2 class="text-success">{{ correct }} / {{ total }}</h2>
+        <a href="{{ url_for('my_quizzes') }}" class="btn btn-primary mt-3">Go to My Quizzes</a>
+        <a href="{{ url_for('attempt_quiz', quiz_id=quiz.id) }}" class="btn btn-start btn-sm">Start Quiz Again</a>
+    </div>
+</div>
+{% endblock %}

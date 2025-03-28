@@ -1,0 +1,33 @@
+{% extends "user_layout.html" %}
+
+{% block title %} My Scores {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>📊 My Scores</h2>
+    <hr>
+
+    {% if scores %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Quiz Title</th>
+                    <th>Score</th>
+                    <th>Attempted On</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for score in scores %}
+                <tr>
+                    <td>{{ score.quiz.title }}</td>
+                    <td>{{ score.total_scored }}</td>
+                    <td>{{ score.time_stamp_of_attempt.strftime('%Y-%m-%d %H:%M') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-muted">You have not attempted any quizzes yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

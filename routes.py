@@ -427,3 +427,64 @@ def record_score(user_id, quiz_id, total_scored):
     score = Score(user_id=user_id, quiz_id=quiz_id, total_scored=total_scored)
     db.session.add(score)
     db.session.commit()
+
+
+@app.route('/quiz/<int:quiz_id>', methods=['GET', 'POST'])
+def attempt_quiz(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+    questions = quiz.questions
+
+    if request.method == 'POST':
+        correct_count = 0
+        total_questions = len(questions)
+
+        for question in questions:
+            selected_option = request.form.get(f'question_{question.id}')
+            if selected_option and selected_option == question.correct_option:
+                correct_count += 1
+
+        # Save the attempt
+        score = Score(user_id=session['user_id'], quiz_id=quiz_id, total_scored=correct_count)
+        db.session.add(score)
+        db.session.commit()
+
+        return redirect(url_for('quiz_result', quiz_id=quiz_id, correct=correct_count, total=total_questions))
+
+    return render_template('attempt_quiz.html', quiz=quiz, questions=questions)
+
+@app.route('/quiz_result/<int:quiz_id>/<int:correct>/<int:total>')
+def quiz_result(quiz_id, correct, total):
+    quiz = Quiz.query.get_or_404(quiz_id)
+    return render_template('quiz_result.html', quiz=quiz, correct=correct, total=total)
+
+@app.route('/my_scores')
+def my_scores():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))  # Redirect if not logged in
+
+    user_id = session['user_id']
+    user = User.query.get(user_id)
+
+    if not user:
+        return "User not found", 404
+
+    scores = Score.query.filter_by(user_id=user_id).all()  # Fetch user's scores
+
+    return render_template('my_scores.html', scores=scores)
+
+@app.route('/my_quizzes')
+def my_quizzes():
+    user_id = session.get('user_id')
+    attempted_quizzes = (
+        db.session.query(Quiz, Score)
+        .join(Score, Quiz.id == Score.quiz_id)
+        .filter(Score.user_id == user_id)
+        .all()
+    )
+
+    return render_template('my_quizzes.html', attempted_quizzes=attempted_quizzes)
+
+def record_score(user_id, quiz_id, total_scored):
+    score = Score(user_id=user_id, quiz_id=quiz_id, total_scored=total_scored)
+    db.session.add(score)
+    db.session.commit()

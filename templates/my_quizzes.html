@@ -1,0 +1,43 @@
+{% extends "user_layout.html" %}
+
+{% block title %} My Quizzes {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>📊 My Quizzes</h2>
+    <hr>
+
+    {% if attempted_quizzes %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Quiz Title</th>
+                    <th>Description</th>
+                    <th>Duration (mins)</th>
+                    <th>Attempted At</th>
+                    <th>Score</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for quiz, score in attempted_quizzes %}
+                <tr>
+                    <td>{{ quiz.title }}</td>
+                    <td>{{ quiz.description }}</td>
+                    <td>{{ quiz.duration }}</td>
+                    <td>{{ score.time_stamp_of_attempt.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ score.total_scored }}</td>
+                    <td>
+                        <a href="{{ url_for('attempt_quiz', quiz_id=quiz.id) }}" class="btn btn-primary btn-sm">
+                            View Quiz
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-muted">You have not attempted any quizzes yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
