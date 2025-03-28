@@ -598,4 +598,4 @@ def settings():
         flash('Profile updated successfully!', 'success')
         return redirect(url_for('settings'))
 
-    return render_template('settings.html', user=user)
+    return render_template('settings.html', user=user) 
