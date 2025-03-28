@@ -1,0 +1,58 @@
+{% extends 'layout2.html' %}
+
+{% block title %}
+    Admin - Add Quiz
+{% endblock %}
+
+{% block style %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background: #fff;
+    }
+    .btn-submit {
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center my-4">Add New Quiz</h2>
+
+    <div class="form-container">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Quiz Title:</label>
+                <input type="text" name="title" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description:</label>
+                <textarea name="description" class="form-control"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Chapter:</label>
+                <select name="chapter_id" class="form-select" required>
+                    <option value="" disabled selected>Select Chapter</option>
+                    {% for chapter in chapters %}
+                        <option value="{{ chapter.id }}">{{ chapter.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Duration (minutes):</label>
+                <input type="number" name="duration" class="form-control" required min="1">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-submit">Add Quiz</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

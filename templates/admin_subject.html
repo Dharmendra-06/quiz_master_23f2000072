@@ -1,0 +1,91 @@
+{% extends 'layout2.html' %}
+
+{% block title %}
+       Admin - Manage Subjects
+{% endblock %}
+
+{% block style %}
+ 
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Manage Subjects</h2>
+
+    <!-- Add Subject Form -->
+    <form action="{{url_for('add_subject')}}" method="POST" class="mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" name="name" class="form-control" placeholder="Subject Name" required>
+            </div>
+            <div class="col-md-4">
+                <input type="text" name="description" class="form-control" placeholder="Description" required>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">Add Subject</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Subject List -->
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Subject Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for subject in subjects %}
+            <tr>
+                <td>{{ subject.id }}</td>
+                <td>{{ subject.name }}</td>
+                <td>{{ subject.description }}</td>
+                <td>
+                    <!-- Edit Button (Opens Modal) -->
+                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ subject.id }}">Edit</button>
+
+                    <!-- Delete Form -->
+                    <form action="{{ url_for('delete_subject', subject_id=subject.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+
+                    <!-- Show Chapters Button -->
+                    <a href="{{ url_for('show_chapters', subject_id=subject.id) }}" class="btn btn-info btn-sm">Show Chapters</a>
+                </td>
+            </tr>
+
+            <!-- Edit Subject Modal -->
+            <div class="modal fade" id="editModal{{ subject.id }}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">Edit Subject</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ url_for('edit_subject', subject_id=subject.id) }}" method="POST>
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Subject Name</label>
+                                    <input type="text" name="name" class="form-control" value="{{ subject.name }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <input type="text" name="description" class="form-control" value="{{ subject.description }}" required>
+                                </div>
+                                <button type="submit" class="btn btn-success">Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+
+
