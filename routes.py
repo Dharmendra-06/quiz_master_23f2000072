@@ -496,7 +496,7 @@ def block_user(user_id):
         flash(f"User {user.username} has been blocked.", "danger")
     return redirect(url_for('admin'))
 
-@app.route('/unblock_user/<int:user_id>')
+@app.route('/unblock_user/int:user_id')
 @admin_required
 def unblock_user(user_id):
     user = User.query.get(user_id)
@@ -802,4 +802,3 @@ def quizzes(chapter_id):
 def questions(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
     return render_template('questions.html', quiz=quiz, questions=quiz.questions)
-
